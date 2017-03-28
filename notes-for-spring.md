@@ -426,5 +426,41 @@ public class AppConfig {
   - [https://dzone.com/articles/spring-configuration-and]
 - XML-centric use of @Configuration classes
 
+## BZ: Unsatisfied dependency expressed through constructor argument with index 2 of type [java.lang.String]: Ambiguous constructor argument types
+### Define bean
+
+    **@Configuration**
+    @Bean
+    public String getQualifier(@Value("${domain}.${realm}") String qualifier){
+        System.out.println(qualifier);
+        return qualifier;
+    }
+        or
+    <bean id="qualifier" class="java.lang.String">
+      <constructor-arg value="${domain}.${realm}"/>
+    </bean>
+
+### Autowire bean
+
+    @javax.inject.Inject
+    @org.springframework.beans.factory.annotation.Value("${domain}.${realm}")
+    private String qualifier;
+
+### Autowire bean on final field
+
+    @RequiredConstructorArgs
+        +
+    <constructor-arg ref="qualifier"/>
+    <constructor-arg value="${domain}.${realm}" type="java.lang.String"/>
+        +
+    @NonNull
+    private final String qualifier;
+
+### @Autowired VS final
+- http://stackoverflow.com/questions/34580033
+- Having @Autowired and final on a field are contradictory
+  - final: variable has one and only one value, and it's initialized at construction time
+  - Inject: Spring will construct the object, leaving the filed as null; later use relflection to initialize the bean
+- **use constructor injection to autowire final fields**
 
 
