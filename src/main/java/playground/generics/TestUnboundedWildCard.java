@@ -1,4 +1,4 @@
-package playground;
+package playground.generics;
 
 import java.util.Arrays;
 import java.util.HashSet;
